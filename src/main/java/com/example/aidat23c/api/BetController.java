@@ -87,6 +87,6 @@ public class BetController {
     @GetMapping
     public MyResponse getJoke(@RequestParam String about) {
 
-        return service.makeRequest(about,SYSTEM_MESSAGE);
+        return service.generateBettingAdvice(about);
     }
 }

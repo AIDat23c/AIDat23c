@@ -7,7 +7,6 @@ import com.example.aidat23c.dtos.Event;
 import com.example.aidat23c.dtos.Bookmaker;
 import com.example.aidat23c.dtos.Market;
 import com.example.aidat23c.dtos.Outcome;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,31 +25,31 @@ import java.util.List;
 @Service
 public class OpenAiService {
 
-    public static final Logger logger = LoggerFactory.getLogger(OpenAiService.class);
+    private static final Logger logger = LoggerFactory.getLogger(OpenAiService.class);
 
     @Value("${app.api-key}")
-    private String API_KEY;
+    private String apiKey;
 
     @Value("${app.url}")
-    public String URL;
+    private String apiUrl;
 
     @Value("${app.model}")
-    public String MODEL;
+    private String model;
 
     @Value("${app.temperature}")
-    public double TEMPERATURE;
+    private double temperature;
 
     @Value("${app.max_tokens}")
-    public int MAX_TOKENS;
+    private int maxTokens;
 
     @Value("${app.frequency_penalty}")
-    public double FREQUENCY_PENALTY;
+    private double frequencyPenalty;
 
     @Value("${app.presence_penalty}")
-    public double PRESENCE_PENALTY;
+    private double presencePenalty;
 
     @Value("${app.top_p}")
-    public double TOP_P;
+    private double topP;
 
     @Value("${app.betting-api-url}")
     private String bettingApiUrl;
@@ -58,72 +57,55 @@ public class OpenAiService {
     @Value("${app.betting-api-key}")
     private String bettingApiKey;
 
-    private WebClient client;
+    private final WebClient client;
 
-    public OpenAiService() {
-        this.client = WebClient.create();
+    public OpenAiService(WebClient.Builder webClientBuilder) {
+        this.client = webClientBuilder.build();
     }
 
-    // Use this constructor for testing, to inject a mock client
-    public OpenAiService(WebClient client) {
-        this.client = client;
-    }
+    public MyResponse generateBettingAdvice(String userPrompt) {
+        String systemMessage = "You are an AI assistant that provides betting insights based on the latest data.";
 
-    public MyResponse makeRequest(String userPrompt, String _systemMessage) {
-
-        // Fetch data from the new API
+        // Fetch data from the betting API
         List<Event> events = fetchBettingData();
 
         // Format the events data
         String dataAsString = formatEventsForPrompt(events);
 
-        // Combine the data with the original prompt
+        // Combine the data with the user prompt
         String combinedPrompt = userPrompt + "\n\nHere is the latest betting data:\n" + dataAsString;
 
-        // Create the OpenAI API request
+        // Create and send the OpenAI API request
         ChatCompletionRequest requestDto = new ChatCompletionRequest();
-        requestDto.setModel(MODEL);
-        requestDto.setTemperature(TEMPERATURE);
-        requestDto.setMax_tokens(MAX_TOKENS);
-        requestDto.setTop_p(TOP_P);
-        requestDto.setFrequency_penalty(FREQUENCY_PENALTY);
-        requestDto.setPresence_penalty(PRESENCE_PENALTY);
-        requestDto.getMessages().add(new ChatCompletionRequest.Message("system", _systemMessage));
+        requestDto.setModel(model);
+        requestDto.setTemperature(temperature);
+        requestDto.setMax_tokens(maxTokens);
+        requestDto.setTop_p(topP);
+        requestDto.setFrequency_penalty(frequencyPenalty);
+        requestDto.setPresence_penalty(presencePenalty);
+        requestDto.getMessages().add(new ChatCompletionRequest.Message("system", systemMessage));
         requestDto.getMessages().add(new ChatCompletionRequest.Message("user", combinedPrompt));
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = "";
-        String err = null;
         try {
-            json = mapper.writeValueAsString(requestDto);
-            System.out.println(json);
             ChatCompletionResponse response = client.post()
-                    .uri(new URI(URL))
-                    .header("Authorization", "Bearer " + API_KEY)
+                    .uri(new URI(apiUrl))
+                    .header("Authorization", "Bearer " + apiKey)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromValue(json))
+                    .body(BodyInserters.fromValue(requestDto))
                     .retrieve()
                     .bodyToMono(ChatCompletionResponse.class)
                     .block();
+
             String responseMsg = response.getChoices().get(0).getMessage().getContent();
-            int tokensUsed = response.getUsage().getTotal_tokens();
-            System.out.print("Tokens used: " + tokensUsed);
-            System.out.print(". Cost ($0.0015 / 1K tokens) : $" + String.format("%6f", (tokensUsed * 0.0015 / 1000)));
-            System.out.println(". For 1$, this is the amount of similar requests you can make: " + Math.round(1 / (tokensUsed * 0.0015 / 1000)));
             return new MyResponse(responseMsg);
+
         } catch (WebClientResponseException e) {
-            logger.error("Error response status code: " + e.getRawStatusCode());
-            logger.error("Error response body: " + e.getResponseBodyAsString());
-            logger.error("WebClientResponseException", e);
-            err = "Internal Server Error, due to a failed request to external service. You could try again" +
-                    "( While you develop, make sure to consult the detailed error message on your backend)";
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, err);
+            logger.error("Error response from OpenAI API: " + e.getResponseBodyAsString());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to get response from OpenAI");
         } catch (Exception e) {
             logger.error("Exception", e);
-            err = "Internal Server Error - You could try again" +
-                    "( While you develop, make sure to consult the detailed error message on your backend)";
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, err);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to process betting data");
         }
     }
 
@@ -137,7 +119,6 @@ public class OpenAiService {
                     .bodyToMono(Event[].class)
                     .block();
 
-            // Convert the array to a list and log the events
             List<Event> events = Arrays.asList(eventsArray);
             logger.debug("Fetched events: " + events);
 
@@ -151,16 +132,14 @@ public class OpenAiService {
         }
     }
 
-
-
     private String formatEventsForPrompt(List<Event> events) {
         StringBuilder sb = new StringBuilder();
         for (Event event : events) {
             sb.append("Event ID: ").append(event.getId()).append("\n");
-            sb.append("Sport: ").append(event.getSport_title()).append("\n");
-            sb.append("Home Team: ").append(event.getHome_team()).append("\n");
-            sb.append("Away Team: ").append(event.getAway_team()).append("\n");
-            sb.append("Commence Time: ").append(event.getCommence_time()).append("\n");
+            sb.append("Sport: ").append(event.getSportTitle()).append("\n");
+            sb.append("Home Team: ").append(event.getHomeTeam()).append("\n");
+            sb.append("Away Team: ").append(event.getAwayTeam()).append("\n");
+            sb.append("Commence Time: ").append(event.getCommenceTime()).append("\n");
             sb.append("Bookmakers:\n");
             for (Bookmaker bookmaker : event.getBookmakers()) {
                 sb.append("  - ").append(bookmaker.getTitle()).append("\n");

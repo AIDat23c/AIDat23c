@@ -8,8 +8,14 @@ import java.util.List;
 @Getter
 @Setter
 public class Market {
+    @JsonProperty("key")
     private String key;
-    private String last_update;
+
+    @JsonProperty("last_update")
+    private String lastUpdate;
+
     @JsonProperty("outcomes")
     private List<Outcome> outcomes;
+
+    // Getters and Setters
 }
