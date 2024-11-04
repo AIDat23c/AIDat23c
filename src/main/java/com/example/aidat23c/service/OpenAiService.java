@@ -63,8 +63,7 @@ public class OpenAiService {
         this.client = webClientBuilder.build();
     }
 
-    public MyResponse generateBettingAdvice(String userPrompt) {
-        String systemMessage = "You are an AI assistant that provides betting insights based on the latest data.";
+    public MyResponse generateBettingAdvice(String userPrompt, String systemMessage) {
 
         // Fetch data from the betting API
         List<Event> events = fetchBettingData();

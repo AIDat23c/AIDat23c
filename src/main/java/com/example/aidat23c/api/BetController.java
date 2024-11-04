@@ -85,8 +85,8 @@ public class BetController {
      * @return the response from ChatGPT.
      */
     @GetMapping
-    public MyResponse getJoke(@RequestParam String about) {
+    public MyResponse getBet(@RequestParam String about) {
 
-        return service.generateBettingAdvice(about);
+        return service.generateBettingAdvice(about,SYSTEM_MESSAGE);
     }
 }
