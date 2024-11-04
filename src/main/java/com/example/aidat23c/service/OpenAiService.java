@@ -136,7 +136,11 @@ public class OpenAiService {
                     .retrieve()
                     .bodyToMono(Event[].class)
                     .block();
+
+            // Convert the array to a list and log the events
             List<Event> events = Arrays.asList(eventsArray);
+            logger.debug("Fetched events: " + events);
+
             return events;
         } catch (WebClientResponseException e) {
             logger.error("Error fetching betting data: " + e.getResponseBodyAsString());
@@ -146,6 +150,8 @@ public class OpenAiService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch betting data");
         }
     }
+
+
 
     private String formatEventsForPrompt(List<Event> events) {
         StringBuilder sb = new StringBuilder();

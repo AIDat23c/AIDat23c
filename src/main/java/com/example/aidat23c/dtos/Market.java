@@ -1,5 +1,6 @@
 package com.example.aidat23c.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
@@ -9,5 +10,6 @@ import java.util.List;
 public class Market {
     private String key;
     private String last_update;
+    @JsonProperty("outcomes")
     private List<Outcome> outcomes;
 }
