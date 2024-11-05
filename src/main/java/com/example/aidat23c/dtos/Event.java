@@ -12,7 +12,8 @@ import java.util.List;
 public class Event {
 
 
-
+@JsonProperty("sport_key")
+private String sportKey;
     @JsonProperty("home_team")
     private String homeTeam;
 
@@ -26,6 +27,7 @@ public class Event {
     @Override
     public String toString() {
         return "Event{" +
+                ", sportskey='" + sportKey + '\'' +
                 ", homeTeam='" + homeTeam + '\'' +
                 ", awayTeam='" + awayTeam + '\'' +
                 ", bookmakers=" + bookmakers +

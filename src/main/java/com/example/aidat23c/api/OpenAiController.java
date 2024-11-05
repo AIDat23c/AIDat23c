@@ -1,9 +1,14 @@
 package com.example.aidat23c.api;
 
+import com.example.aidat23c.dtos.Bookmaker;
+import com.example.aidat23c.dtos.Event;
+import com.example.aidat23c.dtos.League;
 import com.example.aidat23c.dtos.MyResponse;
 import com.example.aidat23c.service.OpenAiService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/openai")
 public class OpenAiController {
@@ -85,5 +90,17 @@ public class OpenAiController {
     @GetMapping("/health")
     public String healthCheck() {
         return "OpenAI Betting Assistant Service is running.";
+    }
+
+    // Endpoint to get filtered leagues
+    @GetMapping("/leagues")
+    public List<League> getLeagues() {
+        return openAiService.fetchFilteredLeagues();
+    }
+
+    // Endpoint to get filtered bookmakers for a selected league
+    @GetMapping("/bookmakers/{leagueId}")
+    public List<Bookmaker> getBookmakers(@PathVariable String leagueId) {
+        return openAiService.fetchFilteredBookmakers(leagueId);
     }
 }

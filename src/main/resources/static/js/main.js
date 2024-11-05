@@ -1,5 +1,7 @@
+const backendURL = "http://localhost:8080/api/openai";
+
 document.addEventListener("DOMContentLoaded", function() {
-    fetch('https://api.the-odds-api.com/v4/sports?apiKey=0fccdfb8828cb3428fff6d71f103289f')
+    fetch(backendURL + '/leagues')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -26,7 +28,9 @@ document.getElementById('leagueSelect').addEventListener('change', function() {
     const bookmakersSelect = document.getElementById('bookmakerSelect');
 
     if (selectedLeague) {
-        const url = `https://api.the-odds-api.com/v4/sports/${selectedLeague}/odds/?regions=eu&markets=h2h&apiKey=0fccdfb8828cb3428fff6d71f103289f`;
+        const url = `${backendURL}/bookmakers/${selectedLeague}`;
+
+        console.log('Fetching URL:', url); // Debugging URL
 
         fetch(url)
             .then(response => {
@@ -36,6 +40,8 @@ document.getElementById('leagueSelect').addEventListener('change', function() {
                 return response.json();
             })
             .then(data => {
+                console.log('Data received:', data); // Debugging data
+
                 // Clear previous options
                 bookmakersSelect.innerHTML = '<option value="">Select a Bookmaker</option>';
 
