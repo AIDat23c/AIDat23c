@@ -15,7 +15,7 @@ public class OpenAiController {
     }
     final static String SYSTEM_MESSAGE = "You are a professional betting instructor. You will be presented with a JSON " +
             "file consisting of football/soccer matches, this will also include the bookmakers odds for each match. " +
-            "You will choose 3 matches you think are worth betting on based on the teams last 5 games and their performance and return your answer. " +
+                "You will choose 3 matches you think are worth betting on based on the teams last 5 games and their performance and return your answer. " +
             "The format of the data you're getting will be like this:\n" +
             "{\n" +
             "    \"id\": <value>,\n" +

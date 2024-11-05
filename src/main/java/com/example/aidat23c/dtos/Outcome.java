@@ -13,5 +13,4 @@ public class Outcome {
     @JsonProperty("price")
     private double price;
 
-    // Getters and Setters
 }
