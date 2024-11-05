@@ -2,9 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Betting Helper</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
 </head>
+
 <body>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">ChatGPT Betting Helper</h1>
+
+    <!-- League Selection -->
+    <div class="form-group">
+        <label for="leagueSelect">Select a League</label>
+        <select id="leagueSelect" class="form-control">
+            <option value="">Select a League</option>
+        </select>
+    </div>
+
+    <!-- Bookmaker Selection -->
+    <div class="form-group">
+        <label for="bookmakerSelect">Select a Bookmaker</label>
+        <select id="bookmakerSelect" class="form-control">
+            <option value="">Select a Bookmaker</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="betAmount">Enter the amount you want to bet:</label>
+        <input type="number" id="betAmount" class="form-control" placeholder="Enter amount" min="1" step="1" required>
+    </div>
+
+    <div class="form-group">
+        <label for="return">Enter the amount you want your bet to be returned:</label>
+        <input type="number" id="return" class="form-control" placeholder="Enter amount" min="1" step="1" required>
+    </div>
+
+    <div class="form-group">
+        <label for="matches">Enter the number of matches you bet on:</label>
+        <input type="number" id="matches" class="form-control" placeholder="Enter number of matches" min="1" step="1" required>
+    </div>
+
+    <!-- Prompt Area -->
+    <div class="form-group">
+        <label for="prompt">Write a prompt for ChatGPT:</label>
+        <textarea id="prompt" class="form-control" placeholder="Type your prompt here..." rows="4"></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <button onclick="sendPrompt()" class="btn btn-primary btn-block">Submit</button>
+
+    <!-- Response Display -->
+    <h2 class="mt-4">ChatGPT Response:</h2>
+    <div id="response" class="border p-3 bg-light">Your response will appear here...</div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/main.js"></script>
 
 </body>
 </html>

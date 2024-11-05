@@ -17,8 +17,59 @@ public class BetController {
     /**
      * This contains the message to the ChatGPT API, telling the AI how it should act in regard to the requests it gets.
      */
-    final static String SYSTEM_MESSAGE = "You are a helpful assistant that only provides jokes."+
-            " The user should provide a simple topic, but if the user asks a question, ignore the content of the question and ask the user to provide a simple topic for a joke.";
+    final static String SYSTEM_MESSAGE = "You are a professional betting instructor. You will be presented with a JSON " +
+            "file consisting of football/soccer matches, this will also include the bookmakers odds for each match. " +
+            "You will choose 3 matches you think are worth betting on based on the teams last 5 games and their performance and return your answer. " +
+            "The format of the data you're getting will be like this:\n" +
+            "{\n" +
+            "    \"id\": <value>,\n" +
+            "    \"home_team\": <value>,\n" +
+            "    \"away_team\": <value>,\n" +
+            "    \"bookmakers\": [\n" +
+            "      {\n" +
+            "        \"key\": <value>\n" +
+            "        \"markets\": [\n" +
+            "          {\n" +
+            "            \"outcomes\": [\n" +
+            "              {\n" +
+            "                \"name\": <value>,\n" +
+            "                \"price\": <value>\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"name\": <value>,\n" +
+            "                \"price\": <value>\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"name\": <value>,\n" +
+            "                \"price\": <value>\n" +
+            "              }\n" +
+            "            ]\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"key\": <value>\n" +
+            "        \"markets\": [\n" +
+            "          {\n" +
+            "            \"outcomes\": [\n" +
+            "              {\n" +
+            "                \"name\": <value>,\n" +
+            "                \"price\": <value>\n" +
+            "              },\n" +
+            "              {\n" +
+            "                 \"name\": <value>,\n" +
+            "                \"price\": <value>\n" +
+            "              },\n" +
+            "              {\n" +
+            "                 \"name\": <value>,\n" +
+            "                \"price\": <value>\n" +
+            "              }\n" +
+            "            ]\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  }";
 
     /**
      * The controller called from the browser client.
