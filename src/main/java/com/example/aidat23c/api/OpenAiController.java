@@ -4,19 +4,15 @@ import com.example.aidat23c.dtos.MyResponse;
 import com.example.aidat23c.service.OpenAiService;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * This class handles fetching a joke via the ChatGPT API
- */
 @RestController
-@RequestMapping("/api/v1/joke")
-@CrossOrigin(origins = "*")
-public class BetController {
+@RequestMapping("/api/openai")
+public class OpenAiController {
 
-    private final OpenAiService service;
+    private final OpenAiService openAiService;
 
-    /**
-     * This contains the message to the ChatGPT API, telling the AI how it should act in regard to the requests it gets.
-     */
+    public OpenAiController(OpenAiService openAiService) {
+        this.openAiService = openAiService;
+    }
     final static String SYSTEM_MESSAGE = "You are a professional betting instructor. You will be presented with a JSON " +
             "file consisting of football/soccer matches, this will also include the bookmakers odds for each match. " +
             "You will choose 3 matches you think are worth betting on based on the teams last 5 games and their performance and return your answer. " +
@@ -70,23 +66,24 @@ public class BetController {
             "      }\n" +
             "    ]\n" +
             "  }";
-
     /**
-     * The controller called from the browser client.
-     * @param service
+     * Endpoint to generate betting advice based on the user prompt and latest betting data.
+     *
+     * @param userPrompt A prompt from the user describing the kind of betting advice they need.
+     * @return MyResponse containing the AI-generated advice.
      */
-    public BetController(OpenAiService service) {
-        this.service = service;
+    @PostMapping("/generate")
+    public MyResponse generateResponse(@RequestParam String userPrompt) {
+        return openAiService.generateBettingAdvice(userPrompt, SYSTEM_MESSAGE);
     }
 
     /**
-     * Handles the request from the browser client.
-     * @param about contains the input that ChatGPT uses to make a joke about.
-     * @return the response from ChatGPT.
+     * Health check endpoint to verify if the service is up and running.
+     *
+     * @return A simple message confirming the service is running.
      */
-    @GetMapping
-    public MyResponse getBet(@RequestParam String about) {
-
-        return service.generateBettingAdvice(about,SYSTEM_MESSAGE);
+    @GetMapping("/health")
+    public String healthCheck() {
+        return "OpenAI Betting Assistant Service is running.";
     }
 }
