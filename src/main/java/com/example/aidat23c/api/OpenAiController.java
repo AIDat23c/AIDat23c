@@ -1,9 +1,6 @@
 package com.example.aidat23c.api;
 
-import com.example.aidat23c.dtos.Bookmaker;
-import com.example.aidat23c.dtos.Event;
-import com.example.aidat23c.dtos.League;
-import com.example.aidat23c.dtos.MyResponse;
+import com.example.aidat23c.dtos.*;
 import com.example.aidat23c.service.OpenAiService;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,9 +69,9 @@ public class OpenAiController {
             "    ]\n" +
             "  }";
 
-    @GetMapping("/generate")
-    public MyResponse generateResponse(@RequestParam int amountOfMatches, @RequestParam int moneyReturned) {
-        return openAiService.generateBettingAdvice(amountOfMatches, moneyReturned, SYSTEM_MESSAGE);
+    @PostMapping("/generate")
+    public MyResponse generateResponse(@RequestBody BetRequest betRequest) {
+        return openAiService.generateBettingAdvice(betRequest, SYSTEM_MESSAGE);
     }
 
    /* @GetMapping("/generate")

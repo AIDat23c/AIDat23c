@@ -59,17 +59,17 @@ public class OpenAiService {
         this.client = webClientBuilder.build();
     }
 
-    public MyResponse generateBettingAdvice(int amountOfMatches,int moneyReturned,String systemMessage) {
+    public MyResponse generateBettingAdvice(BetRequest betRequest,String systemMessage) {
 
         // Fetch data from the betting API
-        List<Event> events = fetchBettingData();
+        List<Event> events = fetchBettingData(betRequest);
 
         // Format the events data
         String dataAsString = formatEventsForPrompt(events);
 
         // Combine the data with the user prompt
-        String combinedPrompt =  "Here is the latest betting data:\n" + dataAsString + "\n the user requests that the bet includes " + amountOfMatches
-                +" matches" + "\n and the user wants their money returned " + moneyReturned + " times";
+        String combinedPrompt =  "Here is the latest betting data:\n" + dataAsString + "\n the user requests that the bet includes " + betRequest.getAmountOfMatches()
+                +" matches" + "\n and the user wants their money returned " + betRequest.getMoneyReturned() + " times";
 
         // Create and send the OpenAI API request
         ChatCompletionRequest requestDto = new ChatCompletionRequest();
@@ -109,10 +109,10 @@ public class OpenAiService {
         }
     }
 
-    private List<Event> fetchBettingData() {
+    private List<Event> fetchBettingData(BetRequest betRequest) {
         try {
             Event[] eventsArray = client.get()
-                    .uri(bettingApiUrl)
+                    .uri(bettingApiUrl+ "/sports/" + betRequest.getLeague() +"/odds/?regions=eu&markets=h2h&bookmakers="+betRequest.getBookmaker() + "&apiKey=" + bettingApiKey)
                     .header("Authorization", "Bearer " + bettingApiKey)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
