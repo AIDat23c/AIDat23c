@@ -68,25 +68,73 @@ document.getElementById('leagueSelect').addEventListener('change', function() {
         bookmakersSelect.innerHTML = '<option value="">Select a Bookmaker</option>';
     }
 });
+
 document.getElementById("button_send").addEventListener("click", function (event) {
     event.preventDefault(); // Prevent form from submitting
 
     // Get the values of the request parameters
-    const amountOfMatches = document.getElementById("matches").value; // Assuming you have an input field with this ID
-    const moneyReturned = document.getElementById("return").value; // Assuming you have an input field with this ID
+    const amountOfMatches = document.getElementById("matches").value;
+    const moneyReturned = document.getElementById("return").value;
+    const league = document.getElementById("leagueSelect").value;
+    const bookmaker = document.getElementById("bookmakerSelect").value;
 
-    // Add them as query parameters in the fetch URL
-    fetch(`${backendURL}/generate?amountOfMatches=${encodeURIComponent(amountOfMatches)}&moneyReturned=${encodeURIComponent(moneyReturned)}`)
-        .then(response => response.json())
+    // Validate inputs
+    if (!amountOfMatches || !moneyReturned || !league || !bookmaker) {
+        alert("Please fill in all required fields.");
+        return;
+    }
+
+    if (isNaN(amountOfMatches) || amountOfMatches <= 0) {
+        alert("Please enter a valid number for Amount of Matches.");
+        return;
+    }
+
+    if (isNaN(moneyReturned) || moneyReturned <= 0) {
+        alert("Please enter a valid number for Money Returned.");
+        return;
+    }
+
+    // Create the request body object
+    const requestBody = {
+        amountOfMatches: parseInt(amountOfMatches, 10),
+        moneyReturned: parseInt(moneyReturned, 10),
+        league: league,
+        bookmaker: bookmaker
+    };
+
+    // Send the POST request to the backend
+    fetch(`${backendURL}/generate`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.json();
+        })
         .then(data => {
             // Handle the response data here
-            document.getElementById("response").innerText = JSON.stringify(data, null, 2);
-            console.log(data);
+            console.log('Response from backend:', data);
+
+            // Display the response message in the 'response' div
+            const responseDiv = document.getElementById('response');
+            if (responseDiv) {
+                responseDiv.textContent = data.answer;
+            } else {
+                alert('Result: ' + data.answer);
+            }
         })
         .catch(error => {
             console.error("Error:", error);
+            alert("An error occurred while processing your request. Please try again later.");
         });
 });
+
+
 
 
 
