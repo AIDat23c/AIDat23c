@@ -59,7 +59,7 @@ public class OpenAiService {
         this.client = webClientBuilder.build();
     }
 
-    public MyResponse generateBettingAdvice(String userPrompt, String systemMessage) {
+    public MyResponse generateBettingAdvice(int amountOfMatches,int moneyReturned,String systemMessage) {
 
         // Fetch data from the betting API
         List<Event> events = fetchBettingData();
@@ -68,7 +68,8 @@ public class OpenAiService {
         String dataAsString = formatEventsForPrompt(events);
 
         // Combine the data with the user prompt
-        String combinedPrompt = userPrompt + "\n\nHere is the latest betting data:\n" + dataAsString;
+        String combinedPrompt =  "Here is the latest betting data:\n" + dataAsString + "\n the user requests that the bet includes " + amountOfMatches
+                +" matches" + "\n and the user wants their money returned " + moneyReturned + " times";
 
         // Create and send the OpenAI API request
         ChatCompletionRequest requestDto = new ChatCompletionRequest();

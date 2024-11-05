@@ -32,11 +32,6 @@
     </div>
 
     <div class="form-group">
-        <label for="betAmount">Enter the amount you want to bet:</label>
-        <input type="number" id="betAmount" class="form-control" placeholder="Enter amount" min="1" step="1" required>
-    </div>
-
-    <div class="form-group">
         <label for="return">Enter the amount you want your bet to be returned:</label>
         <input type="number" id="return" class="form-control" placeholder="Enter amount" min="1" step="1" required>
     </div>
@@ -46,14 +41,9 @@
         <input type="number" id="matches" class="form-control" placeholder="Enter number of matches" min="1" step="1" required>
     </div>
 
-    <!-- Prompt Area -->
-    <div class="form-group">
-        <label for="prompt">Write a prompt for ChatGPT:</label>
-        <textarea id="prompt" class="form-control" placeholder="Type your prompt here..." rows="4"></textarea>
-    </div>
 
     <!-- Submit Button -->
-    <button id="button_send" onclick="sendPrompt()" class="btn btn-primary btn-block">Submit</button>
+    <button id="button_send" class="btn btn-primary btn-block">Submit</button>
 
     <!-- Response Display -->
     <h2 class="mt-4">ChatGPT Response:</h2>

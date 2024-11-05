@@ -68,4 +68,26 @@ document.getElementById('leagueSelect').addEventListener('change', function() {
         bookmakersSelect.innerHTML = '<option value="">Select a Bookmaker</option>';
     }
 });
+document.getElementById("button_send").addEventListener("click", function (event) {
+    event.preventDefault(); // Prevent form from submitting
+
+    // Get the values of the request parameters
+    const amountOfMatches = document.getElementById("matches").value; // Assuming you have an input field with this ID
+    const moneyReturned = document.getElementById("return").value; // Assuming you have an input field with this ID
+
+    // Add them as query parameters in the fetch URL
+    fetch(`${backendURL}/generate?amountOfMatches=${encodeURIComponent(amountOfMatches)}&moneyReturned=${encodeURIComponent(moneyReturned)}`)
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response data here
+            document.getElementById("response").innerText = JSON.stringify(data, null, 2);
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+});
+
+
+
 
