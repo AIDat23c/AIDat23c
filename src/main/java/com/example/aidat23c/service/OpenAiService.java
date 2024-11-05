@@ -138,11 +138,8 @@ public class OpenAiService {
     private String formatEventsForPrompt(List<Event> events) {
         StringBuilder sb = new StringBuilder();
         for (Event event : events) {
-            sb.append("Event ID: ").append(event.getId()).append("\n");
-            sb.append("Sport: ").append(event.getSportTitle()).append("\n");
             sb.append("Home Team: ").append(event.getHomeTeam()).append("\n");
             sb.append("Away Team: ").append(event.getAwayTeam()).append("\n");
-            sb.append("Commence Time: ").append(event.getCommenceTime()).append("\n");
             sb.append("Bookmakers:\n");
             for (Bookmaker bookmaker : event.getBookmakers()) {
                 sb.append("  - ").append(bookmaker.getTitle()).append("\n");

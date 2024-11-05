@@ -1,0 +1,35 @@
+body {
+    background-color: #f8f9fa; /* Light background for contrast */
+}
+
+h1 {
+    color: #343a40; /* Darker text color for the heading */
+}
+
+h2 {
+    color: #007bff; /* Primary color for section headers */
+}
+
+#response {
+    min-height: 100px; /* Ensure there's space for response */
+    color: #495057; /* Dark text for response */
+}
+
+.btn-primary {
+    background-color: #007bff; /* Bootstrap primary color */
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    border-color: #0056b3;
+}
+
+.form-control {
+    border: 1px solid #ced4da; /* Default border color */
+}
+
+.form-control:focus {
+    border-color: #80bdff; /* Focus border color */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Focus shadow */
+}
