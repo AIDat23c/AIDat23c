@@ -48,20 +48,18 @@ document.getElementById('leagueSelect').addEventListener('change', function() {
                 // Set to track added bookmakers
                 const addedBookmakers = new Set();
 
-                // Extract unique bookmakers
-                data.forEach(match => {
-                    match.bookmakers.forEach(bookmaker => {
-                        // Check if the bookmaker is already added
-                        if (!addedBookmakers.has(bookmaker.key)) {
-                            const option = document.createElement('option');
-                            option.value = bookmaker.key; // Use the bookmaker key as the value
-                            option.textContent = bookmaker.title; // Display the bookmaker title
-                            bookmakersSelect.appendChild(option); // Add the option to the select
+                // Since data is an array of bookmakers, iterate over it directly
+                data.forEach(bookmaker => {
+                    // Check if the bookmaker is already added
+                    if (!addedBookmakers.has(bookmaker.key)) {
+                        const option = document.createElement('option');
+                        option.value = bookmaker.key; // Use the bookmaker key as the value
+                        option.textContent = bookmaker.title; // Display the bookmaker title
+                        bookmakersSelect.appendChild(option); // Add the option to the select
 
-                            // Add the bookmaker to the set
-                            addedBookmakers.add(bookmaker.key);
-                        }
-                    });
+                        // Add the bookmaker to the set
+                        addedBookmakers.add(bookmaker.key);
+                    }
                 });
             })
             .catch(error => console.error('Error fetching bookmakers:', error));
@@ -70,3 +68,4 @@ document.getElementById('leagueSelect').addEventListener('change', function() {
         bookmakersSelect.innerHTML = '<option value="">Select a Bookmaker</option>';
     }
 });
+
