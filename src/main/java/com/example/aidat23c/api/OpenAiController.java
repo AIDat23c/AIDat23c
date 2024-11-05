@@ -5,7 +5,6 @@ import com.example.aidat23c.dtos.Event;
 import com.example.aidat23c.dtos.League;
 import com.example.aidat23c.dtos.MyResponse;
 import com.example.aidat23c.service.OpenAiService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -73,20 +72,22 @@ public class OpenAiController {
             "    ]\n" +
             "  }";
 
-    /*@GetMapping("/generate")
+    @GetMapping("/generate")
     public MyResponse generateResponse(@RequestParam int amountOfMatches, @RequestParam int moneyReturned) {
         return openAiService.generateBettingAdvice(amountOfMatches, moneyReturned, SYSTEM_MESSAGE);
-    }*/
+    }
 
-    @GetMapping("/generate")
+   /* @GetMapping("/generate")
     public ResponseEntity<MyResponse> generateBettingAdvice(
             @RequestParam int amountOfMatches,
             @RequestParam int moneyReturned) {
 
+        // Optionally, you can include a system message or set a default one
+        String systemMessage = "Your default system message here";
 
-        MyResponse response = openAiService.generateBettingAdvice(amountOfMatches, moneyReturned, SYSTEM_MESSAGE);
+        MyResponse response = openAiService.generateBettingAdvice(amountOfMatches, moneyReturned, systemMessage);
         return ResponseEntity.ok(response);
-    }
+    }*/
     /**
      * Health check endpoint to verify if the service is up and running.
      *
