@@ -72,6 +72,11 @@ document.getElementById('leagueSelect').addEventListener('change', function() {
 document.getElementById("button_send").addEventListener("click", function (event) {
     event.preventDefault(); // Prevent form from submitting
 
+    const button = event.target;
+
+    // Disable the button immediately
+    button.disabled = true;
+
     // Get the values of the request parameters
     const amountOfMatches = document.getElementById("matches").value;
     const moneyReturned = document.getElementById("return").value;
@@ -82,16 +87,19 @@ document.getElementById("button_send").addEventListener("click", function (event
     // Validate inputs
     if (!amountOfMatches || !moneyReturned || !league || !bookmaker) {
         alert("Please fill in all required fields.");
+        button.disabled = false; // Re-enable immediately if validation fails
         return;
     }
 
     if (isNaN(amountOfMatches) || amountOfMatches <= 0 || amountOfMatches > 10) {
         alert("Please enter a valid number for Amount of Matches.");
+        button.disabled = false; // Re-enable immediately if validation fails
         return;
     }
 
     if (isNaN(moneyReturned) || moneyReturned <= 0 || moneyReturned > 1000) {
         alert("Please enter a valid number for Money Returned.");
+        button.disabled = false; // Re-enable immediately if validation fails
         return;
     }
 
@@ -136,6 +144,10 @@ document.getElementById("button_send").addEventListener("click", function (event
         .catch(error => {
             console.error("Error:", error);
             alert("An error occurred while processing your request. Please try again later.");
+        })
+        .finally(() => {
+            // Re-enable the button after the response is received
+            button.disabled = false;
         });
 });
 
