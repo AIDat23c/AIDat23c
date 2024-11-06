@@ -99,7 +99,8 @@ document.getElementById("button_send").addEventListener("click", function (event
         amountOfMatches: parseInt(amountOfMatches, 10),
         moneyReturned: parseInt(moneyReturned, 10),
         league: league,
-        bookmaker: bookmaker
+        bookmaker: bookmaker,
+        userInput: userInput
     };
 
     // Send the POST request to the backend
