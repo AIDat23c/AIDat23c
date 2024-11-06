@@ -1,22 +1,20 @@
 package com.example.aidat23c.api;
 
-import com.example.aidat23c.dtos.MyResponse;
-import com.example.aidat23c.service.OpenAiService;
+import com.example.aidat23c.dtos.*;
+import com.example.aidat23c.service.BettingApiService;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * This class handles fetching a joke via the ChatGPT API
- */
-@RestController
-@RequestMapping("/api/v1/joke")
+import java.util.List;
 @CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/api/openai")
 public class BetController {
 
-    private final OpenAiService service;
+    private final BettingApiService bettingApiService;
 
-    /**
-     * This contains the message to the ChatGPT API, telling the AI how it should act in regard to the requests it gets.
-     */
+    public BetController(BettingApiService bettingApiService) {
+        this.bettingApiService = bettingApiService;
+    }
     final static String SYSTEM_MESSAGE = "You are a professional betting instructor. You will be presented with a JSON " +
             "file consisting of football/soccer matches, this will also include the bookmakers odds for each match. " +
             "You will be given an amount of games the user want to bet on and you will choose which are worth betting on based on the teams last 5 games and their performance and return your answer. " +
@@ -72,22 +70,41 @@ public class BetController {
             "    ]\n" +
             "  }";
 
-    /**
-     * The controller called from the browser client.
-     * @param service
-     */
-    public BetController(OpenAiService service) {
-        this.service = service;
+    @PostMapping("/generate")
+    public MyResponse generateResponse(@RequestBody BetRequest betRequest) {
+        return bettingApiService.generateBettingAdvice(betRequest, SYSTEM_MESSAGE);
     }
 
-    /**
-     * Handles the request from the browser client.
-     * @param about contains the input that ChatGPT uses to make a joke about.
-     * @return the response from ChatGPT.
-     */
-    /*@GetMapping
-    public MyResponse getBet(@RequestParam String about) {
+   /* @GetMapping("/generate")
+    public ResponseEntity<MyResponse> generateBettingAdvice(
+            @RequestParam int amountOfMatches,
+            @RequestParam int moneyReturned) {
 
-        return service.generateBettingAdvice(about,SYSTEM_MESSAGE);
+        // Optionally, you can include a system message or set a default one
+        String systemMessage = "Your default system message here";
+
+        MyResponse response = openAiService.generateBettingAdvice(amountOfMatches, moneyReturned, systemMessage);
+        return ResponseEntity.ok(response);
     }*/
+    /**
+     * Health check endpoint to verify if the service is up and running.
+     *
+     * @return A simple message confirming the service is running.
+     */
+    @GetMapping("/health")
+    public String healthCheck() {
+        return "OpenAI Betting Assistant Service is running.";
+    }
+
+    // Endpoint to get filtered leagues
+    @GetMapping("/leagues")
+    public List<League> getLeagues() {
+        return bettingApiService.fetchFilteredLeagues();
+    }
+
+    // Endpoint to get filtered bookmakers for a selected league
+    @GetMapping("/bookmakers/{leagueId}")
+    public List<Bookmaker> getBookmakers(@PathVariable String leagueId) {
+        return bettingApiService.fetchFilteredBookmakers(leagueId);
+    }
 }
