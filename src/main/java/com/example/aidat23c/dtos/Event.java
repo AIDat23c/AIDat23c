@@ -12,8 +12,9 @@ import java.util.List;
 public class Event {
 
 
-@JsonProperty("sport_key")
-private String sportKey;
+    @JsonProperty("sport_key")
+    private String sportKey;
+
     @JsonProperty("home_team")
     private String homeTeam;
 

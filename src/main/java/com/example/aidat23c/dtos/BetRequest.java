@@ -12,4 +12,5 @@ public class BetRequest {
     private int moneyReturned;
     private String league;
     private String bookmaker;
+    private String userPrompt;
 }
