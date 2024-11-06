@@ -65,7 +65,6 @@ public class BettingApiService {
     public MyResponse generateRandomBet(String systemMessage) {
         Random random = new Random();
 
-        // Step 1: Fetch a random league
         List<League> leagues = fetchFilteredLeagues();
         if (leagues.isEmpty()) {
             logger.error("No leagues available");
@@ -74,7 +73,6 @@ public class BettingApiService {
         League randomLeague = leagues.get(random.nextInt(leagues.size()));
         logger.info("Selected Random League: " + randomLeague.getKey());
 
-        // Step 2: Fetch a random bookmaker for the selected league
         List<Bookmaker> bookmakers = fetchFilteredBookmakers(randomLeague.getKey());
         if (bookmakers.isEmpty()) {
             logger.error("No bookmakers available for league: " + randomLeague.getKey());
@@ -83,18 +81,15 @@ public class BettingApiService {
         Bookmaker randomBookmaker = bookmakers.get(random.nextInt(bookmakers.size()));
         logger.info("Selected Random Bookmaker: " + randomBookmaker.getTitle());
 
-        // Step 3: Generate random amount of matches and money returned
         int amountOfMatches = random.nextInt(7) + 2; // Random int between 2 and 8 inclusive
         int moneyReturned = random.nextInt(97) + 4;  // Random int between 4 and 100 inclusive
 
-        // Step 4: Create a BetRequest with these values
         BetRequest randomBetRequest = new BetRequest();
         randomBetRequest.setLeague(randomLeague.getKey());
         randomBetRequest.setBookmaker(randomBookmaker.getKey());
         randomBetRequest.setAmountOfMatches(amountOfMatches);
         randomBetRequest.setMoneyReturned(moneyReturned);
 
-        // Step 5: Fetch betting data using the randomBetRequest
         List<Event> events = fetchBettingData(randomBetRequest);
         if (events.isEmpty()) {
             logger.warn("No events found for league: " + randomLeague.getKey() + " and bookmaker: " + randomBookmaker.getTitle());
@@ -103,16 +98,13 @@ public class BettingApiService {
             logger.info("Fetched " + events.size() + " events for league: " + randomLeague.getKey());
         }
 
-        // Step 6: Format the events for prompt
         String dataAsString = formatEventsForPrompt(events);
-        // Step 5: Create combined prompt with selected league and bookmaker info
         String combinedPrompt = "Here is the latest betting data:\n" + dataAsString +
                 "\nSelected League: " + randomLeague.getKey() +
                 "\nSelected Bookmaker: " + randomBookmaker.getTitle() +
                 "\nUser requested odds for matches including: " + randomLeague.getKey();
         logger.info("Combined Prompt: " + combinedPrompt);
 
-        // Step 6: Set up the OpenAI request
         ChatCompletionRequest requestDto = new ChatCompletionRequest();
         requestDto.setModel(model);
         requestDto.setTemperature(temperature);
@@ -154,13 +146,10 @@ public class BettingApiService {
 
     public MyResponse generateBettingAdvice(BetRequest betRequest,String systemMessage) {
 
-        // Fetch data from the betting API
         List<Event> events = fetchBettingData(betRequest);
 
-        // Format the events data
         String dataAsString = formatEventsForPrompt(events);
 
-        // Combine the data with the user prompt
         String combinedPrompt =  "Here is the latest betting data:\n" + dataAsString + "\n I request that the bet includes " + betRequest.getAmountOfMatches()
                 +" matches and I want my money returned " + betRequest.getMoneyReturned() + " times. " + "Extra request: \\n" + betRequest.getUserInput();
 

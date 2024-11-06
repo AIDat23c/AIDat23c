@@ -17,5 +17,4 @@ public class Market {
     @JsonProperty("outcomes")
     private List<Outcome> outcomes;
 
-    // Getters and Setters
 }

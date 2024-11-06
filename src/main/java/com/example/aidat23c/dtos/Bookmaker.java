@@ -23,5 +23,4 @@ public class Bookmaker {
     @JsonProperty("markets")
     private List<Market> markets;
 
-    // Getters and Setters
 }

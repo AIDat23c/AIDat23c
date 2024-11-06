@@ -129,22 +129,7 @@ public class BetController {
     }
 
 
-   /* @GetMapping("/generate")
-    public ResponseEntity<MyResponse> generateBettingAdvice(
-            @RequestParam int amountOfMatches,
-            @RequestParam int moneyReturned) {
 
-        // Optionally, you can include a system message or set a default one
-        String systemMessage = "Your default system message here";
-
-        MyResponse response = openAiService.generateBettingAdvice(amountOfMatches, moneyReturned, systemMessage);
-        return ResponseEntity.ok(response);
-    }*/
-    /**
-     * Health check endpoint to verify if the service is up and running.
-     *
-     * @return A simple message confirming the service is running.
-     */
     @GetMapping("/health")
     public String healthCheck() {
         return "OpenAI Betting Assistant Service is running.";
