@@ -85,15 +85,17 @@ document.getElementById("button_send").addEventListener("click", function (event
         return;
     }
 
-    if (isNaN(amountOfMatches) || amountOfMatches <= 0) {
+    if (isNaN(amountOfMatches) || amountOfMatches <= 0 || amountOfMatches > 10) {
         alert("Please enter a valid number for Amount of Matches.");
         return;
     }
 
-    if (isNaN(moneyReturned) || moneyReturned <= 0) {
+    if (isNaN(moneyReturned) || moneyReturned <= 0 || moneyReturned > 1000) {
         alert("Please enter a valid number for Money Returned.");
         return;
     }
+
+    document.getElementById("loading-wheel").style.display = "block";
 
     // Create the request body object
     const requestBody = {
@@ -116,6 +118,7 @@ document.getElementById("button_send").addEventListener("click", function (event
             if (!response.ok) {
                 return response.text().then(text => { throw new Error(text) });
             }
+            document.getElementById("loading-wheel").style.display = "none";
             return response.json();
         })
         .then(data => {
