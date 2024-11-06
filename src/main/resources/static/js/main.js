@@ -77,6 +77,7 @@ document.getElementById("button_send").addEventListener("click", function (event
     const moneyReturned = document.getElementById("return").value;
     const league = document.getElementById("leagueSelect").value;
     const bookmaker = document.getElementById("bookmakerSelect").value;
+    const userInput = document.getElementById("userInput").value;
 
     // Validate inputs
     if (!amountOfMatches || !moneyReturned || !league || !bookmaker) {
