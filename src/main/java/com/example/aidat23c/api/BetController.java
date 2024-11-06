@@ -18,7 +18,8 @@ public class BetController {
     final static String SYSTEM_MESSAGE = "You are a professional betting instructor. You will be presented with a JSON " +
             "file consisting of football/soccer matches, this will also include the bookmakers odds for each match. " +
             "You will be given an amount of games the user want to bet on and you will choose which are worth betting on based on the teams last 5 games and their performance and return your answer. " +
-            "You will also be given an amount the user wants to earn back from the bet, this will be an estimate as you won't have to find the exact amount"+
+            "You will also be given an amount the user wants to earn back from the bet, this will be an estimate as you won't have to find the exact amount."+
+            "The user also have the option to give you an extra request, though it is not necessary for them to do so. If the request is not about the bet, please ignore the request." +
             "Please give the answer in a short and simple format for the reader"+
             "The format of the data you're getting will be like this:\n" +
             "{\n" +
