@@ -13,9 +13,12 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.lang.reflect.Array;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,6 +61,96 @@ public class BettingApiService {
     public BettingApiService(WebClient.Builder webClientBuilder) {
         this.client = webClientBuilder.build();
     }
+
+    public MyResponse generateRandomBet(String systemMessage) {
+        Random random = new Random();
+
+        // Step 1: Fetch a random league
+        List<League> leagues = fetchFilteredLeagues();
+        if (leagues.isEmpty()) {
+            logger.error("No leagues available");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No leagues available");
+        }
+        League randomLeague = leagues.get(random.nextInt(leagues.size()));
+        logger.info("Selected Random League: " + randomLeague.getKey());
+
+        // Step 2: Fetch a random bookmaker for the selected league
+        List<Bookmaker> bookmakers = fetchFilteredBookmakers(randomLeague.getKey());
+        if (bookmakers.isEmpty()) {
+            logger.error("No bookmakers available for league: " + randomLeague.getKey());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No bookmakers available for the selected league");
+        }
+        Bookmaker randomBookmaker = bookmakers.get(random.nextInt(bookmakers.size()));
+        logger.info("Selected Random Bookmaker: " + randomBookmaker.getTitle());
+
+        // Step 3: Generate random amount of matches and money returned
+        int amountOfMatches = random.nextInt(7) + 2; // Random int between 2 and 8 inclusive
+        int moneyReturned = random.nextInt(97) + 4;  // Random int between 4 and 100 inclusive
+
+        // Step 4: Create a BetRequest with these values
+        BetRequest randomBetRequest = new BetRequest();
+        randomBetRequest.setLeague(randomLeague.getKey());
+        randomBetRequest.setBookmaker(randomBookmaker.getKey());
+        randomBetRequest.setAmountOfMatches(amountOfMatches);
+        randomBetRequest.setMoneyReturned(moneyReturned);
+
+        // Step 5: Fetch betting data using the randomBetRequest
+        List<Event> events = fetchBettingData(randomBetRequest);
+        if (events.isEmpty()) {
+            logger.warn("No events found for league: " + randomLeague.getKey() + " and bookmaker: " + randomBookmaker.getTitle());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No events found for the selected league and bookmaker");
+        } else {
+            logger.info("Fetched " + events.size() + " events for league: " + randomLeague.getKey());
+        }
+
+        // Step 6: Format the events for prompt
+        String dataAsString = formatEventsForPrompt(events);
+        // Step 5: Create combined prompt with selected league and bookmaker info
+        String combinedPrompt = "Here is the latest betting data:\n" + dataAsString +
+                "\nSelected League: " + randomLeague.getKey() +
+                "\nSelected Bookmaker: " + randomBookmaker.getTitle() +
+                "\nUser requested odds for matches including: " + randomLeague.getKey();
+        logger.info("Combined Prompt: " + combinedPrompt);
+
+        // Step 6: Set up the OpenAI request
+        ChatCompletionRequest requestDto = new ChatCompletionRequest();
+        requestDto.setModel(model);
+        requestDto.setTemperature(temperature);
+        requestDto.setMax_tokens(maxTokens);
+        requestDto.setTop_p(topP);
+        requestDto.setFrequency_penalty(frequencyPenalty);
+        requestDto.setPresence_penalty(presencePenalty);
+        requestDto.getMessages().add(new ChatCompletionRequest.Message("system", systemMessage));
+        requestDto.getMessages().add(new ChatCompletionRequest.Message("user", combinedPrompt));
+
+        try {
+            ChatCompletionResponse response = client.post()
+                    .uri(new URI(apiUrl))
+                    .header("Authorization", "Bearer " + apiKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromValue(requestDto))
+                    .retrieve()
+                    .bodyToMono(ChatCompletionResponse.class)
+                    .block();
+
+            String responseMsg = response.getChoices().get(0).getMessage().getContent();
+            int tokensUsed = response.getUsage().getTotal_tokens();
+            logger.info("OpenAI API response: " + responseMsg);
+            logger.info("Tokens used: " + tokensUsed);
+            logger.info("Cost ($0.0015 / 1K tokens): $" + String.format("%6f", (tokensUsed * 0.0015 / 1000)));
+
+            return new MyResponse(responseMsg);
+
+        } catch (WebClientResponseException e) {
+            logger.error("Error response from OpenAI API: " + e.getResponseBodyAsString(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to get response from OpenAI");
+        } catch (Exception e) {
+            logger.error("Exception during betting data processing", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to process betting data");
+        }
+    }
+
 
     public MyResponse generateBettingAdvice(BetRequest betRequest,String systemMessage) {
 
@@ -202,6 +295,7 @@ public class BettingApiService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch bookmakers");
         }
     }
+
 
 
 }

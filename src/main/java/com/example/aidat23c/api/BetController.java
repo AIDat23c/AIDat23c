@@ -112,6 +112,12 @@ public class BetController {
 
         return bettingApiService.generateBettingAdvice(betRequest, SYSTEM_MESSAGE);
     }
+    @PostMapping("/generate-random")
+    public MyResponse generateRandomResponse() {
+        return bettingApiService.generateRandomBet(SYSTEM_MESSAGE);
+    }
+
+
 
     private Bucket createNewBucket(){
         Bandwidth limit = Bandwidth.classic(BUCKET_CAPACITY, Refill.greedy(REFFILL_AMOUNT, Duration.ofMinutes(REFILL_TIME)));
@@ -155,4 +161,6 @@ public class BetController {
     public List<Bookmaker> getBookmakers(@PathVariable String leagueId) {
         return bettingApiService.fetchFilteredBookmakers(leagueId);
     }
+
+
 }
