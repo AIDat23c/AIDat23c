@@ -103,6 +103,12 @@ document.getElementById("button_send").addEventListener("click", function (event
         return;
     }
 
+    if(userInput.length > 600) {
+        alert("Your custom request is too long.")
+        button.disabled = false;
+        return;
+    }
+
     document.getElementById("loading-wheel").style.display = "block";
 
     // Create the request body object
