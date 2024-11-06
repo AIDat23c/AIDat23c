@@ -73,6 +73,8 @@ public class BetController {
 
     @PostMapping("/generate")
     public MyResponse generateResponse(@RequestBody BetRequest betRequest) {
+        System.out.println("Received user prompt: " + betRequest.getUserInput());
+
         return bettingApiService.generateBettingAdvice(betRequest, SYSTEM_MESSAGE);
     }
 
