@@ -19,6 +19,7 @@ public class BetController {
             "file consisting of football/soccer matches, this will also include the bookmakers odds for each match. " +
             "You will be given an amount of games the user want to bet on and you will choose which are worth betting on based on the teams last 5 games and their performance and return your answer. " +
             "You will also be given an amount the user wants to earn back from the bet, this will be an estimate as you won't have to find the exact amount"+
+            "Please give the answer in a short and simple format for the reader"+
             "The format of the data you're getting will be like this:\n" +
             "{\n" +
             "    \"id\": <value>,\n" +
