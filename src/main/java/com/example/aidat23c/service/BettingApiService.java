@@ -68,8 +68,8 @@ public class BettingApiService {
         String dataAsString = formatEventsForPrompt(events);
 
         // Combine the data with the user prompt
-        String combinedPrompt =  "Here is the latest betting data:\n" + dataAsString + "\n the user requests that the bet includes " + betRequest.getAmountOfMatches()
-                +" matches" + "\n and the user wants their money returned " + betRequest.getMoneyReturned() + " times. " + "Extra request: \\n" + betRequest.getUserInput() ;
+        String combinedPrompt =  "Here is the latest betting data:\n" + dataAsString + "\n I request that the bet includes " + betRequest.getAmountOfMatches()
+                +" matches and I want my money returned " + betRequest.getMoneyReturned() + " times. " + "Extra request: \\n" + betRequest.getUserInput();
 
         // Create and send the OpenAI API request
         ChatCompletionRequest requestDto = new ChatCompletionRequest();
