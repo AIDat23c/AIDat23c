@@ -37,3 +37,13 @@ h2 {
     white-space: pre-wrap;
 }
 
+#loading-wheel {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centers the element */
+    z-index: 1000; /* Keep it on top of other elements */
+    width: 150px; /* Adjust size as needed */
+    height: 150px;
+}
