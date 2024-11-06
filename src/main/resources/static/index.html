@@ -32,13 +32,13 @@
     </div>
 
     <div class="form-group">
-        <label for="return">Enter the amount you want your bet to be returned:</label>
-        <input type="number" id="return" class="form-control" placeholder="Enter amount" min="1" step="1" required>
+        <label for="return">Enter the amount you want your bet to be returned (max 1000):</label>
+        <input type="number" id="return" class="form-control" placeholder="Enter amount" min="1" max="1000" step="1" required>
     </div>
 
     <div class="form-group">
-        <label for="matches">Enter the number of matches you bet on:</label>
-        <input type="number" id="matches" class="form-control" placeholder="Enter number of matches" min="1" step="1" required>
+        <label for="matches">Enter the number of matches you bet on (max 10):</label>
+        <input type="number" id="matches" class="form-control" placeholder="Enter number of matches" min="1" max="10" step="1" required>
     </div>
 
     <div class="form-group">
@@ -50,6 +50,10 @@
 
     <!-- Submit Button -->
     <button id="button_send" class="btn btn-primary btn-block">Submit</button>
+
+    <img id="loading-wheel" style="display: none" src="https://c.tenor.com/Krf7sKoeHNUAAAAC/tenor.gif">
+
+
 
     <!-- Response Display -->
     <h2 class="mt-4">ChatGPT Response:</h2>
