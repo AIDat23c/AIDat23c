@@ -1,12 +1,11 @@
 const backendURL = "http://localhost:8080/api/openai";
 
-// Load leagues when the DOM is fully loaded
-document.addEventListener("DOMContentLoaded", function () {
-    fetchLeagues();
-});
+// Global variables to store leagues and bookmakers
+let soccerLeagues = [];
+const bookmakersPerLeague = {};
 
-function fetchLeagues() {
-    fetch(`${backendURL}/leagues`)
+document.addEventListener("DOMContentLoaded", function () {
+    fetch(backendURL + '/leagues')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -14,9 +13,9 @@ function fetchLeagues() {
             return response.json();
         })
         .then(data => {
+            soccerLeagues = data.filter(sport => sport.key.startsWith('soccer'));
             const leagueSelect = document.getElementById('leagueSelect');
-            // Filter leagues that start with 'soccer' and populate dropdown
-            const soccerLeagues = data.filter(league => league.key.startsWith('soccer'));
+
             soccerLeagues.forEach(league => {
                 const option = document.createElement('option');
                 option.value = league.key;
@@ -25,20 +24,17 @@ function fetchLeagues() {
             });
         })
         .catch(error => console.error('Error fetching leagues:', error));
-}
-
-// Event listener for fetching bookmakers based on selected league
-document.getElementById('leagueSelect').addEventListener('change', function () {
-    const selectedLeague = this.value;
-    fetchBookmakers(selectedLeague);
 });
 
-function fetchBookmakers(leagueId) {
+// Event listener for league selection to fetch bookmakers
+document.getElementById('leagueSelect').addEventListener('change', function () {
+    const selectedLeague = this.value;
     const bookmakersSelect = document.getElementById('bookmakerSelect');
-    bookmakersSelect.innerHTML = '<option value="">Select a Bookmaker</option>'; // Reset options
 
-    if (leagueId) {
-        fetch(`${backendURL}/bookmakers/${leagueId}`)
+    if (selectedLeague) {
+        const url = `${backendURL}/bookmakers/${selectedLeague}`;
+
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok ' + response.statusText);
@@ -46,6 +42,8 @@ function fetchBookmakers(leagueId) {
                 return response.json();
             })
             .then(data => {
+                bookmakersSelect.innerHTML = '<option value="">Select a Bookmaker</option>';
+
                 const addedBookmakers = new Set();
                 data.forEach(bookmaker => {
                     if (!addedBookmakers.has(bookmaker.key)) {
@@ -58,20 +56,15 @@ function fetchBookmakers(leagueId) {
                 });
             })
             .catch(error => console.error('Error fetching bookmakers:', error));
+    } else {
+        bookmakersSelect.innerHTML = '<option value="">Select a Bookmaker</option>';
     }
-}
-
-// Submit button event listener for generating betting advice
-document.getElementById("button_send").addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent form submission
-    submitBetRequest(event.target); // Pass button as parameter
 });
 
-function submitBetRequest(button) {
-    // Disable the button to prevent multiple submissions
-    button.disabled = true;
+// Event listener for generating a specific bet
+document.getElementById("button_send").addEventListener("click", function (event) {
+    event.preventDefault();
 
-    // Gather form values
     const amountOfMatches = document.getElementById("matches").value;
     const moneyReturned = document.getElementById("return").value;
     const league = document.getElementById("leagueSelect").value;
@@ -97,15 +90,13 @@ function submitBetRequest(button) {
         return;
     }
 
-    if(userInput.length > 600) {
+    if (userInput.length > 600) {
         alert("Your custom request is too long.")
         button.disabled = false;
         return;
     }
 
     document.getElementById("loading-wheel").style.display = "block";
-
-    // Create the request body object
     const requestBody = {
         amountOfMatches: parseInt(amountOfMatches, 10),
         moneyReturned: parseInt(moneyReturned, 10),
@@ -114,7 +105,6 @@ function submitBetRequest(button) {
         userInput: userInput
     };
 
-    // Send POST request to the backend
     fetch(`${backendURL}/generate`, {
         method: 'POST',
         headers: {
@@ -124,29 +114,64 @@ function submitBetRequest(button) {
     })
         .then(response => {
             if (!response.ok) {
-                return response.text().then(text => { throw new Error(text) });
+                return response.text().then(text => {
+                    throw new Error(text)
+                });
             }
             return response.json();
         })
         .then(data => {
-            displayResult(data.answer);
+            const responseDiv = document.getElementById('response');
+            if (responseDiv) {
+                responseDiv.style.whiteSpace = 'pre-wrap';
+                responseDiv.textContent = data.answer || "No response message";
+            }
         })
         .catch(error => {
             console.error("Error:", error);
-            alert("An error occurred while processing your request. Too many requests. Please try again later.");
+            alert("An error occurred while processing your request. Please try again later.");
+        }).finally(() => {
+        // Re-enable the button after the response is received
+        document.getElementById("loading-wheel").style.display = "none";
+        button.disabled = false;
+    });
+});
+
+// Event listener for generating a random bet
+document.getElementById("button_random2").addEventListener("click", function () {
+    const apiEndpoint = "/generate-random";
+    const responseDiv = document.getElementById("response");
+    const button = document.getElementById("button_random2");
+
+    button.disabled = true;
+    button.textContent = "Generating...";
+
+    fetch(backendURL + apiEndpoint, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to generate a random bet");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (responseDiv) {
+                responseDiv.style.whiteSpace = 'pre-wrap';
+                responseDiv.textContent = data.answer || "No response message";
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            if (responseDiv) {
+                responseDiv.textContent = "An error occurred while generating the bet.";
+            }
         })
         .finally(() => {
-            // Re-enable the button after the response is received
-            document.getElementById("loading-wheel").style.display = "none";
             button.disabled = false;
+            button.textContent = "Generate Random Bet";
         });
-}
-
-function displayResult(answer) {
-    const responseDiv = document.getElementById('response');
-    if (responseDiv) {
-        responseDiv.textContent = answer;
-    } else {
-        alert('Result: ' + answer);
-    }
-}
+});
