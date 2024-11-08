@@ -13,9 +13,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.lang.reflect.Array;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -89,10 +87,7 @@ public class BettingApiService {
 
         List<Event> events = fetchBettingData(randomBetRequest);
         if (events.isEmpty()) {
-            logger.warn("No events found for league: " + randomLeague.getKey() + " and bookmaker: " + randomBookmaker.getTitle());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No events found for the selected league and bookmaker");
-        } else {
-            logger.info("Fetched " + events.size() + " events for league: " + randomLeague.getKey());
         }
 
         String dataAsString = formatEventsForPrompt(events);
@@ -100,7 +95,6 @@ public class BettingApiService {
                 "\nSelected League: " + randomLeague.getKey() +
                 "\nSelected Bookmaker: " + randomBookmaker.getTitle() +
                 "\nUser requested odds for matches including: " + randomLeague.getKey();
-        logger.info("Combined Prompt: " + combinedPrompt);
 
         ChatCompletionRequest requestDto = new ChatCompletionRequest();
         requestDto.setModel(model);
@@ -150,7 +144,6 @@ public class BettingApiService {
         String combinedPrompt = "Here is the latest betting data:\n" + dataAsString +
                 "\nthe combined odds should be in range of <5 of  " + betRequest.getMoneyReturned() +  "I request that the bet includes " + betRequest.getAmountOfMatches() +
                 " matches. Please adjust the number of matches if its impossible to keep the combined odds within <5 of my desired return. Extra request:\n" + betRequest.getUserInput();
-            logger.debug(combinedPrompt);
 
         // Create and send the OpenAI API request
         ChatCompletionRequest requestDto = new ChatCompletionRequest();
@@ -202,7 +195,7 @@ public class BettingApiService {
 
 
             List<Event> events = Arrays.asList(eventsArray);
-            logger.debug("Fetched events: " + events);
+
 
             return events;
         } catch (WebClientResponseException e) {

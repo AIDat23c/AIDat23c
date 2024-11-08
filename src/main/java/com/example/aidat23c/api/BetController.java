@@ -100,7 +100,6 @@ public class BetController {
 
     @PostMapping("/generate")
     public MyResponse generateResponse(@RequestBody BetRequest betRequest, HttpServletRequest request) {
-        System.out.println("Received user prompt: " + betRequest.getUserInput());
 
         String ip = request.getRemoteAddr();
         Bucket bucket = getBucket(ip);
