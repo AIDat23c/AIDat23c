@@ -67,7 +67,6 @@ public class BettingApiService {
 
         List<League> leagues = fetchFilteredLeagues();
         if (leagues.isEmpty()) {
-            logger.error("No leagues available");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No leagues available");
         }
         League randomLeague = leagues.get(random.nextInt(leagues.size()));
@@ -75,11 +74,9 @@ public class BettingApiService {
 
         List<Bookmaker> bookmakers = fetchFilteredBookmakers(randomLeague.getKey());
         if (bookmakers.isEmpty()) {
-            logger.error("No bookmakers available for league: " + randomLeague.getKey());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No bookmakers available for the selected league");
         }
         Bookmaker randomBookmaker = bookmakers.get(random.nextInt(bookmakers.size()));
-        logger.info("Selected Random Bookmaker: " + randomBookmaker.getTitle());
 
         int amountOfMatches = random.nextInt(7) + 2; // Random int between 2 and 8 inclusive
         int moneyReturned = random.nextInt(97) + 4;  // Random int between 4 and 100 inclusive
@@ -150,8 +147,10 @@ public class BettingApiService {
 
         String dataAsString = formatEventsForPrompt(events);
 
-        String combinedPrompt =  "Here is the latest betting data:\n" + dataAsString + "\n I request that the bet includes " + betRequest.getAmountOfMatches() + ""
-                +" matches and I want my money returned " + betRequest.getMoneyReturned() + " times. " + "Extra request: \\n" + betRequest.getUserInput();
+        String combinedPrompt = "Here is the latest betting data:\n" + dataAsString +
+                "\nthe combined odds should be in range of <5 of  " + betRequest.getMoneyReturned() +  "I request that the bet includes " + betRequest.getAmountOfMatches() +
+                " matches. Please adjust the number of matches if its impossible to keep the combined odds within <5 of my desired return. Extra request:\n" + betRequest.getUserInput();
+            logger.debug(combinedPrompt);
 
         // Create and send the OpenAI API request
         ChatCompletionRequest requestDto = new ChatCompletionRequest();

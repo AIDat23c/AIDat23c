@@ -44,8 +44,9 @@ public class BetController {
             "You will be given an amount of games the user wants to bet on and you will choose which are worth betting on based on the teams' last 5 games and their performance and return your answer. " +
             "You will also be given an amount the user wants to earn back from the bet, this will be an estimate as you won't have to find the exact amount, but be in the range of 5. If that's not possible remove a match from the bet" +
             "The user also has the option to give you an extra request, though it is not necessary for them to do so. If the request is not about the bet, please ignore the request. " +
-            "Please give the answer in a short and simple format for the reader and display the league and bookmaker and the combined odds." +
-            "You will use emojis. " +
+            "Please give the answer in a short and simple format for the reader and display the league and bookmaker and the combined odds. Be precise by multiplying all selected odds together and rounding only at the end." +
+            "You will use emojis." +
+            "\"When calculating combined odds for betting selections, multiply the odds of each selected match exactly, without rounding intermediate results, and only round to two decimal places at the end.\" " +
             "The format of the data you're getting will be like this:\n" +
             "{\n" +
             "    \"id\": <value>,\n" +
