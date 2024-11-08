@@ -15,50 +15,52 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">ChatGPT Betting Helper</h1>
 
-    <!-- League Selection -->
-    <div class="form-group">
-        <label for="leagueSelect">Select a League</label>
-        <select id="leagueSelect" class="form-control">
-            <option value="">Select a League</option>
-        </select>
+    <!-- Flexbox container for Group 1 and Group 2 -->
+    <div class="d-flex justify-content-between">
+        <!-- Group 1: Selects and Enter fields -->
+        <div class="group-1 w-50 pr-3">
+            <div class="form-group">
+                <label for="leagueSelect">Select a League</label>
+                <select id="leagueSelect" class="form-control">
+                    <option value="">Select a League</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="bookmakerSelect">Select a Bookmaker</label>
+                <select id="bookmakerSelect" class="form-control">
+                    <option value="">Select a Bookmaker</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="return">Enter the amount you want your bet to be returned (max 1000):</label>
+                <input type="number" id="return" class="form-control" placeholder="Enter amount" min="1" max="1000" step="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="matches">Enter the number of matches you bet on (max 10):</label>
+                <input type="number" id="matches" class="form-control" placeholder="Enter number of matches" min="1" max="10" step="1" required>
+            </div>
+        </div>
+
+        <!-- Group 2: Insert Command Field -->
+        <div class="group-2 w-50 pl-3">
+            <div class="form-group">
+                <label for="userInput">Insert specific command if you wish:</label>
+                <textarea id="userInput" class="form-control" placeholder="Type your text here" rows="8"></textarea>
+            </div>
+        </div>
     </div>
 
-    <!-- Bookmaker Selection -->
-    <div class="form-group">
-        <label for="bookmakerSelect">Select a Bookmaker</label>
-        <select id="bookmakerSelect" class="form-control">
-            <option value="">Select a Bookmaker</option>
-        </select>
+    <!-- Buttons -->
+    <div class="d-flex justify-content-center mt-4">
+        <button id="button_send" class="btn btn-primary mx-2 px-4 py-2">Submit</button>
+        <button id="button_random2" class="btn btn-success mx-2 px-4 py-2">Generate Random Bet</button>
     </div>
 
-    <div class="form-group">
-        <label for="return">Enter the amount you want your bet to be returned (max 1000):</label>
-        <input type="number" id="return" class="form-control" placeholder="Enter amount" min="1" max="1000" step="1" required>
-    </div>
-
-    <div class="form-group">
-        <label for="matches">Enter the number of matches you bet on (max 10):</label>
-        <input type="number" id="matches" class="form-control" placeholder="Enter number of matches" min="1" max="10" step="1" required>
-    </div>
-
-    <div class="form-group">
-        <label for="userInput">Insert specific command if you wish: </label>
-        <textarea id="userInput" class="form-control" placeholder="Type your text here" rows="4"></textarea>
-    </div>
-
-
-
-
-    <button id="button_send" class="btn btn-primary btn-block">Submit</button>
-
-    <img id="loading-wheel" style="display: none" src="https://c.tenor.com/Krf7sKoeHNUAAAAC/tenor.gif">
-
-
-
-
-    <button id="button_random2" class="btn btn-primary btn-block">Generate Random Bet</button>
-
-
+    <!-- Loading Wheel -->
+    <img id="loading-wheel" src="https://c.tenor.com/Krf7sKoeHNUAAAAC/tenor.gif" alt="Loading" style="display: none;">
 
     <!-- Response Display -->
     <h2 class="mt-4">ChatGPT Response:</h2>
