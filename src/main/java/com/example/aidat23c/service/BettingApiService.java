@@ -200,6 +200,7 @@ public class BettingApiService {
                     .bodyToMono(Event[].class)
                     .block();
 
+
             List<Event> events = Arrays.asList(eventsArray);
             logger.debug("Fetched events: " + events);
 

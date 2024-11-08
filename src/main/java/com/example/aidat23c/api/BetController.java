@@ -40,9 +40,9 @@ public class BetController {
         this.bettingApiService = bettingApiService;
     }
     final static String SYSTEM_MESSAGE = "You are a professional betting instructor. You will be presented with a JSON " +
-            "file consisting of football/soccer matches, this will also include the bookmakers odds for each match. " +
+            "file consisting of football/soccer matches, this will also include the bookmakers odds for each match, the odds can be h2h and totals. " +
             "You will be given an amount of games the user wants to bet on and you will choose which are worth betting on based on the teams' last 5 games and their performance and return your answer. " +
-            "You will also be given an amount the user wants to earn back from the bet, this will be an estimate as you won't have to find the exact amount, but be in the range of 5. If that's not possible remove a match from the bet" +
+            "You will also be given an amount the user wants to earn back from the bet, this will be an estimate as you won't have to find the exact amount, but be in the range of <5. If that's not possible remove a match from the bet and dont include it in your printed answer" +
             "The user also has the option to give you an extra request, though it is not necessary for them to do so. If the request is not about the bet, please ignore the request. " +
             "Please give the answer in a short and simple format for the reader and display the league and bookmaker and the combined odds. Be precise by multiplying all selected odds together and rounding only at the end." +
             "You will use emojis." +
@@ -103,11 +103,8 @@ public class BetController {
         System.out.println("Received user prompt: " + betRequest.getUserInput());
 
         String ip = request.getRemoteAddr();
-        // Get or create the bucket for the given IP/key.
         Bucket bucket = getBucket(ip);
-        // Does the request adhere to the IP-rate  limitations?
         if (!bucket.tryConsume(1)) {
-            // If not, tell the client "Too many requests".
             throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Too many requests, try again later");
         }
 
@@ -136,13 +133,11 @@ public class BetController {
         return "OpenAI Betting Assistant Service is running.";
     }
 
-    // Endpoint to get filtered leagues
     @GetMapping("/leagues")
     public List<League> getLeagues() {
         return bettingApiService.fetchFilteredLeagues();
     }
 
-    // Endpoint to get filtered bookmakers for a selected league
     @GetMapping("/bookmakers/{leagueId}")
     public List<Bookmaker> getBookmakers(@PathVariable String leagueId) {
         return bettingApiService.fetchFilteredBookmakers(leagueId);
