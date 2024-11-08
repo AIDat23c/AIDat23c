@@ -64,6 +64,8 @@ document.getElementById('leagueSelect').addEventListener('change', function () {
 // Event listener for generating a specific bet
 document.getElementById("button_send").addEventListener("click", function (event) {
     event.preventDefault();
+    const button = event.target
+    button.disabled=true;
 
     const amountOfMatches = document.getElementById("matches").value;
     const moneyReturned = document.getElementById("return").value;

@@ -150,7 +150,7 @@ public class BettingApiService {
 
         String dataAsString = formatEventsForPrompt(events);
 
-        String combinedPrompt =  "Here is the latest betting data:\n" + dataAsString + "\n I request that the bet includes " + betRequest.getAmountOfMatches()
+        String combinedPrompt =  "Here is the latest betting data:\n" + dataAsString + "\n I request that the bet includes " + betRequest.getAmountOfMatches() + ""
                 +" matches and I want my money returned " + betRequest.getMoneyReturned() + " times. " + "Extra request: \\n" + betRequest.getUserInput();
 
         // Create and send the OpenAI API request
@@ -194,7 +194,7 @@ public class BettingApiService {
     private List<Event> fetchBettingData(BetRequest betRequest) {
         try {
             Event[] eventsArray = client.get()
-                    .uri(bettingApiUrl+ "/sports/" + betRequest.getLeague() +"/odds/?regions=eu&markets=h2h&bookmakers="+betRequest.getBookmaker() + "&apiKey=" + bettingApiKey)
+                    .uri(bettingApiUrl+ "/sports/" + betRequest.getLeague() +"/odds/?regions=eu&markets=h2h,totals&bookmakers="+betRequest.getBookmaker() + "&apiKey=" + bettingApiKey)
                     .header("Authorization", "Bearer " + bettingApiKey)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
